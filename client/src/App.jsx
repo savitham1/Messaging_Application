@@ -5,6 +5,7 @@ import { Cookies } from 'universal-cookie';
 
 import { ChannelListContainer, ChannelContainer, Auth } from './components';
 
+
 import './App.css'; // import the styles sheet
 
 // API Key to setup the chat
