@@ -14,6 +14,8 @@ const initialState = {
     phoneNumber : '',
 }
 
+const cookies = new Cookies();
+
 const Auth = () => {
     const [ isSignup, setIsSignUp ] = useState(true); // Maintain the state of user login. user is logged in or not. 
     const [ form, setForm ] = useState(initialState);
@@ -27,7 +29,30 @@ const Auth = () => {
     const handleSubmit = (event) => {
         event.preventDefault(); // to avaoid reach from reloading the page. we want to maintain the state until the form is submitted.
 
-        console.log(form);
+        const { fullName, userName, password, phoneNumber, avatarURL } = form; // get the data from the form.
+
+        const URL = 'http://localhost:5000/auth'; // URL of the server port where the data is sent.
+
+        // Make a request to the server using a different URL based on the case if the user is logged in or not; 
+        // we send the data to the server and get back some data.
+        const { data : { token, userId, hashedPassword}} = await axios.post(`${URL}/${isSignup ? 'signup' : 'login'}`, {
+            userName, password, fullName, phoneNumber, avatarURL,
+        });
+
+        // save the data recieved from the server in the cookies
+        cookies.set('token', token);
+        cookies.set('username', username);
+        cookies.set('fullName', fullName);
+        cookies.set('userId', userId);
+
+        if (isSignup) {
+            cookies.set('phoneNumber', phoneNumber);
+            cookies.set('avatarURL', avatarURL);
+            cookies.set('hashedPassword', hashedPassword);
+        }
+        
+        // After the cookies are set, reload the application! 
+        window.location.reload(); // we reload the <App/> component
     }
 
     const switchMode = () => {
